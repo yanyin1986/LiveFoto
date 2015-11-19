@@ -13,6 +13,7 @@
 		F7F7F3481BFD6B0500391939 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7F7F3461BFD6B0500391939 /* LaunchScreen.storyboard */; };
 		F7F7F3501BFD6C1B00391939 /* ShotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F7F34F1BFD6C1B00391939 /* ShotViewController.swift */; };
 		F7F7F3521BFD6D7700391939 /* LFCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F7F3511BFD6D7700391939 /* LFCamera.swift */; };
+		F7F7F3541BFDB52800391939 /* LFEAGLContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F7F3531BFDB52800391939 /* LFEAGLContext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		F7F7F3491BFD6B0500391939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F7F7F34F1BFD6C1B00391939 /* ShotViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShotViewController.swift; sourceTree = "<group>"; };
 		F7F7F3511BFD6D7700391939 /* LFCamera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LFCamera.swift; sourceTree = "<group>"; };
+		F7F7F3531BFDB52800391939 /* LFEAGLContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LFEAGLContext.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 		F7F7F33C1BFD6B0500391939 /* LiveFoto */ = {
 			isa = PBXGroup;
 			children = (
+				F7F7F3531BFDB52800391939 /* LFEAGLContext.swift */,
 				F7F7F3511BFD6D7700391939 /* LFCamera.swift */,
 				F7F7F33D1BFD6B0500391939 /* AppDelegate.swift */,
 				F7F7F34F1BFD6C1B00391939 /* ShotViewController.swift */,
@@ -140,6 +143,7 @@
 			files = (
 				F7F7F3501BFD6C1B00391939 /* ShotViewController.swift in Sources */,
 				F7F7F3521BFD6D7700391939 /* LFCamera.swift in Sources */,
+				F7F7F3541BFDB52800391939 /* LFEAGLContext.swift in Sources */,
 				F7F7F33E1BFD6B0500391939 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
