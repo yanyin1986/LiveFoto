@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ksx-71-sE8">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
     </dependencies>
     <scenes>
@@ -39,21 +38,66 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yjb-fn-NqD" customClass="GLKView">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="niV-dK-dpd">
+                                        <rect key="frame" x="277" y="31" width="46" height="30"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="dOp-Rp-Se8"/>
+                                            <constraint firstAttribute="width" constant="46" id="tLu-Zf-9CK"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <connections>
+                                            <action selector="toggle:" destination="hka-GU-ob9" eventType="touchUpInside" id="deV-2N-2o4"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jXn-uA-TOR">
+                                        <rect key="frame" x="277" y="531" width="46" height="30"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="Wcx-oS-SHa"/>
+                                            <constraint firstAttribute="width" constant="46" id="ubA-lQ-xJr"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <connections>
+                                            <action selector="snap:" destination="hka-GU-ob9" eventType="touchUpInside" id="agd-KR-9XD"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="niV-dK-dpd" firstAttribute="centerX" secondItem="Yjb-fn-NqD" secondAttribute="centerX" id="7Qo-Yx-IeW"/>
+                                    <constraint firstItem="niV-dK-dpd" firstAttribute="top" secondItem="Yjb-fn-NqD" secondAttribute="top" constant="31" id="Gw0-VY-ab4"/>
+                                    <constraint firstItem="jXn-uA-TOR" firstAttribute="centerX" secondItem="Yjb-fn-NqD" secondAttribute="centerX" id="R4y-i2-gZW"/>
+                                    <constraint firstAttribute="bottom" secondItem="jXn-uA-TOR" secondAttribute="bottom" constant="39" id="i9r-GK-29T"/>
+                                    <constraint firstAttribute="height" constant="600" id="o86-En-gHy"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="Yjb-fn-NqD" firstAttribute="centerX" secondItem="IKe-f4-Ly7" secondAttribute="centerX" id="7tV-SR-UOz"/>
                             <constraint firstItem="ygb-f4-Jxx" firstAttribute="top" secondItem="Yjb-fn-NqD" secondAttribute="bottom" id="Pc2-9t-XvY"/>
                             <constraint firstAttribute="trailing" secondItem="Yjb-fn-NqD" secondAttribute="trailing" id="X6L-U3-lcX"/>
                             <constraint firstItem="Yjb-fn-NqD" firstAttribute="top" secondItem="teR-DG-wyS" secondAttribute="bottom" id="ifN-Qm-sPd"/>
                             <constraint firstItem="Yjb-fn-NqD" firstAttribute="leading" secondItem="IKe-f4-Ly7" secondAttribute="leading" id="oMP-Hf-n8z"/>
+                            <constraint firstItem="Yjb-fn-NqD" firstAttribute="width" secondItem="IKe-f4-Ly7" secondAttribute="width" id="u1o-vJ-II5"/>
+                            <constraint firstItem="Yjb-fn-NqD" firstAttribute="centerY" secondItem="IKe-f4-Ly7" secondAttribute="centerY" id="wFc-kF-WW3"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="X6L-U3-lcX"/>
+                                <exclude reference="ifN-Qm-sPd"/>
+                                <exclude reference="oMP-Hf-n8z"/>
+                                <exclude reference="Pc2-9t-XvY"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" id="f3B-dz-r9A"/>
                     <connections>
+                        <outlet property="heightConst" destination="o86-En-gHy" id="Xt9-Ud-h3b"/>
                         <outlet property="previewView" destination="Yjb-fn-NqD" id="Qve-da-us4"/>
                     </connections>
                 </viewController>

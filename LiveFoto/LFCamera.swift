@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 import CoreImage
+import Photos
 
 protocol LFCameraDelegate {
     func capture(image : CIImage, time : CMTime)
@@ -58,6 +59,12 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         })
     }
     
+    func pause() {
+        dispatch_async((self._sessionQueue)!, { () -> Void in
+            self._captureSession?.stopRunning()
+        })
+    }
+    
     func initSession() {
         dispatch_async((self._sessionQueue)!, {()->Void in
             // begin config
@@ -88,6 +95,13 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                 
             }
             
+            // still output
+            let stillImageOutput = AVCaptureStillImageOutput()
+            if self._captureSession?.canAddOutput(stillImageOutput) == true {
+                self._captureSession?.addOutput(stillImageOutput)
+                self._stillImageOutput = stillImageOutput
+            }
+            
             self._captureSession?.commitConfiguration()
         })
     }
@@ -108,20 +122,39 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         return videoCaptureDevice
     }
     
+    func snapStill(block : (Bool) -> Void) {
+        let connection = self._stillImageOutput?.connectionWithMediaType(AVMediaTypeVideo)
+        self._stillImageOutput?.captureStillImageAsynchronouslyFromConnection(connection, completionHandler: { (sample : CMSampleBufferRef!, error : NSError!) -> Void in
+            let data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sample)
+            let url = NSTemporaryDirectory() + "/out.jpg";
+            if NSFileManager.defaultManager().fileExistsAtPath(url) == true {
+                do {
+                    try NSFileManager.defaultManager().removeItemAtPath(url)
+                } catch (_) {}
+            }
+            
+            data.writeToFile(url, atomically: true)
+        })
+    }
+    
     // MARK: sample buffer delegate
     
     /// not drop frame
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         let presentationTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         if CMTIME_IS_INVALID(_previousTime) == false {
-            let frameTime = CMTimeSubtract(presentationTime, _previousTime)
-            let frameTimeInSeconds = CMTimeGetSeconds(frameTime)
-            let fps = 1.0 / frameTimeInSeconds
-            NSLog("%g", fps)
+//            let frameTime = CMTimeSubtract(presentationTime, _previousTime)
+//            let frameTimeInSeconds = CMTimeGetSeconds(frameTime)
+//            let fps = 1.0 / frameTimeInSeconds
+//            NSLog("%g", fps)
         }
         _previousTime = presentationTime;
         
-        let cvpixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
+        let cvpixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) as CVPixelBufferRef!
+        let w = CVPixelBufferGetWidth(cvpixelBuffer)
+        let h = CVPixelBufferGetHeight(cvpixelBuffer)
+        
+        print("%d x %d", w, h)
         if cvpixelBuffer != nil {
             let ciimage = CIImage(CVImageBuffer: cvpixelBuffer!)
             
