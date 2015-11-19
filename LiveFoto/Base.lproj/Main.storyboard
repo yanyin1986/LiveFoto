@@ -8,7 +8,10 @@
         <!--Navigation Controller-->
         <scene sceneID="Xij-pP-wWO">
             <objects>
-                <navigationController id="ksx-71-sE8" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="ksx-71-sE8" sceneMemberID="viewController">
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ZFp-DY-dh7">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -22,10 +25,10 @@
             </objects>
             <point key="canvasLocation" x="-201" y="349"/>
         </scene>
-        <!--View Controller-->
+        <!--Shot View Controller-->
         <scene sceneID="Ykx-St-fJA">
             <objects>
-                <viewController id="hka-GU-ob9" sceneMemberID="viewController">
+                <viewController id="hka-GU-ob9" customClass="ShotViewController" customModule="LiveFoto" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="teR-DG-wyS"/>
                         <viewControllerLayoutGuide type="bottom" id="ygb-f4-Jxx"/>
