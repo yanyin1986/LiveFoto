@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import GLKit
 
 class ShotViewController: UIViewController {
+    
+    @IBOutlet weak var previewView: GLKView!
 
     override func viewDidLoad() {
         super.viewDidLoad()

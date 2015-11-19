@@ -36,10 +36,26 @@
                     <view key="view" contentMode="scaleToFill" id="IKe-f4-Ly7">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yjb-fn-NqD" customClass="GLKView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="ygb-f4-Jxx" firstAttribute="top" secondItem="Yjb-fn-NqD" secondAttribute="bottom" id="Pc2-9t-XvY"/>
+                            <constraint firstAttribute="trailing" secondItem="Yjb-fn-NqD" secondAttribute="trailing" id="X6L-U3-lcX"/>
+                            <constraint firstItem="Yjb-fn-NqD" firstAttribute="top" secondItem="teR-DG-wyS" secondAttribute="bottom" id="ifN-Qm-sPd"/>
+                            <constraint firstItem="Yjb-fn-NqD" firstAttribute="leading" secondItem="IKe-f4-Ly7" secondAttribute="leading" id="oMP-Hf-n8z"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="f3B-dz-r9A"/>
+                    <connections>
+                        <outlet property="previewView" destination="Yjb-fn-NqD" id="Qve-da-us4"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3u2-M1-DwJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
