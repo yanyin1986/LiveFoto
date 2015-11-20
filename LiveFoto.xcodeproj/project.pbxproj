@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F7070F371BFE150B008680CF /* LFVideoWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7070F361BFE150B008680CF /* LFVideoWriter.swift */; };
+		F7070F3A1BFE1970008680CF /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7070F381BFE1970008680CF /* FilterViewController.swift */; };
+		F7070F3B1BFE1970008680CF /* FilterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7070F391BFE1970008680CF /* FilterViewController.xib */; };
+		F7070F3F1BFE200E008680CF /* NSFileManager+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7070F3E1BFE200E008680CF /* NSFileManager+Utils.swift */; };
 		F7F7F33E1BFD6B0500391939 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F7F33D1BFD6B0500391939 /* AppDelegate.swift */; };
 		F7F7F3431BFD6B0500391939 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7F7F3411BFD6B0500391939 /* Main.storyboard */; };
 		F7F7F3451BFD6B0500391939 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7F7F3441BFD6B0500391939 /* Assets.xcassets */; };
@@ -17,6 +21,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F7070F361BFE150B008680CF /* LFVideoWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LFVideoWriter.swift; sourceTree = "<group>"; };
+		F7070F381BFE1970008680CF /* FilterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FilterViewController.swift; path = Filter/FilterViewController.swift; sourceTree = "<group>"; };
+		F7070F391BFE1970008680CF /* FilterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FilterViewController.xib; path = Filter/FilterViewController.xib; sourceTree = "<group>"; };
+		F7070F3E1BFE200E008680CF /* NSFileManager+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSFileManager+Utils.swift"; path = "Utils/NSFileManager+Utils.swift"; sourceTree = "<group>"; };
 		F7F7F33A1BFD6B0500391939 /* LiveFoto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveFoto.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7F7F33D1BFD6B0500391939 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F7F7F3421BFD6B0500391939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -39,6 +47,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F7070F3D1BFE1980008680CF /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				F7070F381BFE1970008680CF /* FilterViewController.swift */,
+				F7070F391BFE1970008680CF /* FilterViewController.xib */,
+			);
+			name = Filter;
+			sourceTree = "<group>";
+		};
+		F7070F401BFE2013008680CF /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				F7070F3E1BFE200E008680CF /* NSFileManager+Utils.swift */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
 		F7F7F3311BFD6B0500391939 = {
 			isa = PBXGroup;
 			children = (
@@ -58,8 +83,11 @@
 		F7F7F33C1BFD6B0500391939 /* LiveFoto */ = {
 			isa = PBXGroup;
 			children = (
+				F7070F401BFE2013008680CF /* Utils */,
+				F7070F3D1BFE1980008680CF /* Filter */,
 				F7F7F3531BFDB52800391939 /* LFEAGLContext.swift */,
 				F7F7F3511BFD6D7700391939 /* LFCamera.swift */,
+				F7070F361BFE150B008680CF /* LFVideoWriter.swift */,
 				F7F7F33D1BFD6B0500391939 /* AppDelegate.swift */,
 				F7F7F34F1BFD6C1B00391939 /* ShotViewController.swift */,
 				F7F7F3411BFD6B0500391939 /* Main.storyboard */,
@@ -130,6 +158,7 @@
 			files = (
 				F7F7F3481BFD6B0500391939 /* LaunchScreen.storyboard in Resources */,
 				F7F7F3451BFD6B0500391939 /* Assets.xcassets in Resources */,
+				F7070F3B1BFE1970008680CF /* FilterViewController.xib in Resources */,
 				F7F7F3431BFD6B0500391939 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -141,8 +170,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7070F3A1BFE1970008680CF /* FilterViewController.swift in Sources */,
 				F7F7F3501BFD6C1B00391939 /* ShotViewController.swift in Sources */,
+				F7070F3F1BFE200E008680CF /* NSFileManager+Utils.swift in Sources */,
 				F7F7F3521BFD6D7700391939 /* LFCamera.swift in Sources */,
+				F7070F371BFE150B008680CF /* LFVideoWriter.swift in Sources */,
 				F7F7F3541BFDB52800391939 /* LFEAGLContext.swift in Sources */,
 				F7F7F33E1BFD6B0500391939 /* AppDelegate.swift in Sources */,
 			);
@@ -296,6 +328,7 @@
 				F7F7F34E1BFD6B0500391939 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

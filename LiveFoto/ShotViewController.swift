@@ -10,6 +10,7 @@ import UIKit
 import GLKit
 import AVFoundation
 import QuartzCore
+import CoreImage
 
 class ShotViewController: UIViewController, LFCameraDelegate {
     
@@ -22,6 +23,15 @@ class ShotViewController: UIViewController, LFCameraDelegate {
     var index : Double! = 0
     var crop : Bool! = false
     
+    // writer
+    var ciContext : CIContext?
+    var colorSpace : CGColorSpace?
+    var recordStart : Bool = false
+    var recordStartTime : CMTime = kCMTimeInvalid
+    var assetWriter : AVAssetWriter?
+    var videoInput : AVAssetWriterInput?
+    var pixelAdapter : AVAssetWriterInputPixelBufferAdaptor?
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -29,7 +39,9 @@ class ShotViewController: UIViewController, LFCameraDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        ciContext = CIContext(EAGLContext: LFEAGLContext.shareContext.glContext!,
+            options: [kCIContextWorkingColorSpace : NSNull()])
+        colorSpace = CGColorSpaceCreateDeviceRGB()
         previewView.context = LFEAGLContext.shareContext.glContext!
         previewView.enableSetNeedsDisplay = false
         
@@ -38,8 +50,6 @@ class ShotViewController: UIViewController, LFCameraDelegate {
         camera?.initSession()
         
         transformFilter = CIFilter(name: "CIAffineTransform")
-//        transformFilter = CIFilter(name: "CIPerspectiveTransform")
-        cropFilter = CIFilter(name: "CICrop")
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -54,21 +64,12 @@ class ShotViewController: UIViewController, LFCameraDelegate {
 
     // MARK: LFCameraDelegate
     func capture(image: CIImage, time: CMTime) {
-        
-        
-        
         transformFilter?.setValue(image, forKey: kCIInputImageKey)
-        var transform = CGAffineTransformTranslate(CGAffineTransformIdentity, -960, -540)
-        transform = CGAffineTransformRotate(transform, CGFloat(M_PI_2 * 3))// / 1000.0 * self.index))
-//        transform = CGAffineTransformTranslate(transform, 960, 540)
+        var transform = CGAffineTransformIdentity// CGAffineTransformTranslate(CGAffineTransformIdentity, -960, -540)
+        transform = CGAffineTransformRotate(transform, CGFloat(M_PI_2 * 0.5))// / 1000.0 * self.index))
         
         transformFilter?.setValue(NSValue(CGAffineTransform : transform), forKey: kCIInputTransformKey)
-//        transformFilter?.setValue(CIVector(x: CGFloat(previewView.drawableHeight), y: CGFloat(previewView.drawableWidth)), forKey: "inputTopLeft")
-//        transformFilter?.setValue(CIVector(x: 0, y: 0), forKey: "inputBottomRight")
-//        transformFilter?.setValue(CIVector(x: 0, y: CGFloat(previewView.drawableWidth)), forKey: "inputTopRight")
-//        transformFilter?.setValue(CIVector(x: CGFloat(previewView.drawableHeight), y: 0), forKey: "inputBottomLeft")
-        
-        let ciimage : CIImage! = transformFilter?.outputImage!
+        let ciimage : CIImage! = image.imageByApplyingTransform(transform)
         var extent : CGRect! = ciimage?.extent
 //        extent.origin = CGPointZero
         
@@ -80,7 +81,6 @@ class ShotViewController: UIViewController, LFCameraDelegate {
         let cropedImage = cropFilter?.outputImage
         let cropedExtent = cropedImage?.extent as CGRect!
         
-        previewView.bindDrawable()
         EAGLContext.setCurrentContext(LFEAGLContext.shareContext.glContext)
         let width = CGFloat(previewView.drawableWidth)
         let height = CGFloat(previewView.drawableHeight)
@@ -89,9 +89,49 @@ class ShotViewController: UIViewController, LFCameraDelegate {
         if crop == true {
             camera?.ciContext?.drawImage(cropedImage!, inRect:bounds, fromRect: cropedExtent)
         } else {
-            camera?.ciContext?.drawImage(ciimage!, inRect:bounds, fromRect: ciimage.extent)
+            if recordStart == true {
+                if CMTIME_IS_INVALID(recordStartTime) == true {
+                    recordStartTime = time
+                }
+                
+                var renderedOutputPixelBuffer : CVPixelBuffer? = nil
+                CVPixelBufferPoolCreatePixelBuffer(nil, pixelAdapter!.pixelBufferPool!, &renderedOutputPixelBuffer)
+                
+                ciContext?.render(image,
+                    toCVPixelBuffer: renderedOutputPixelBuffer!,
+                    bounds: CGRectMake(0, 0, 1980, 1080),
+                    colorSpace: colorSpace)
+                
+                let buf = CIImage(CVPixelBuffer: renderedOutputPixelBuffer!)
+
+                previewView.bindDrawable()
+                camera?.ciContext?.drawImage(buf, inRect:bounds, fromRect:buf.extent)
+                previewView.display()
+                
+                if (videoInput?.readyForMoreMediaData == true) {
+                    let presentationTime = CMTimeSubtract(time, recordStartTime)
+                    let status = pixelAdapter?.appendPixelBuffer(renderedOutputPixelBuffer!, withPresentationTime: presentationTime)
+                    if status == true {
+                        NSLog("append pixel succ")
+                    } else {
+                        NSLog("error!")
+                    }
+                    
+                    if CMTimeGetSeconds(presentationTime) > 1.0 {
+                        recordStart = false
+                        videoInput?.markAsFinished()
+                        assetWriter?.finishWritingWithCompletionHandler({ () -> Void in
+                            NSLog("OK!")
+                        })
+                    }
+                }
+                
+            } else {
+                previewView.bindDrawable()
+                camera?.ciContext?.drawImage(ciimage!, inRect:bounds, fromRect: ciimage.extent)
+                previewView.display()
+            }
         }
-        previewView.display()
         self.index = self.index + 1
     }
     
@@ -113,6 +153,57 @@ class ShotViewController: UIViewController, LFCameraDelegate {
         camera?.snapStill({ (result : Bool) -> Void in
             
         })
+    }
+    
+    @IBAction func record(sender : UIButton!) {
+        let url = NSTemporaryDirectory().stringByAppendingString("out.mov")
+        if NSFileManager.defaultManager().fileExistsAtPath(url) == true {
+            do { try NSFileManager.defaultManager().removeItemAtPath(url) } catch {}
+        }
+        
+        
+        do {
+            self.assetWriter = try AVAssetWriter(URL: NSURL(fileURLWithPath: url), fileType: AVFileTypeQuickTimeMovie)
+        } catch (let error as NSError) {
+            NSLog("%@", error)
+        }
+        
+        precondition(self.assetWriter != nil)
+        
+        do {
+            let outputSettings = [
+                AVVideoCodecKey : AVVideoCodecH264,
+                AVVideoWidthKey : NSNumber(int: 1980),
+                AVVideoHeightKey: NSNumber(int: 1080)
+            ]
+            self.videoInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: outputSettings)
+            self.videoInput!.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+            
+            /*
+            NSDictionary *pixelBufferAttributes =
+            @{
+            (id) kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+            (id) kCVPixelBufferWidthKey : @(self.currentVideoDimensions.width),
+            (id) kCVPixelBufferHeightKey : @(self.currentVideoDimensions.height),
+            (id) kCVPixelBufferOpenGLESCompatibilityKey : @(YES),
+            };
+*/
+            let pixelAttributes =
+            [
+                kCVPixelBufferPixelFormatTypeKey as String : NSNumber(unsignedInt: kCVPixelFormatType_32BGRA),
+                kCVPixelBufferWidthKey as String : NSNumber(double: 1920),
+                kCVPixelBufferHeightKey as String : NSNumber(double: 1080),
+                kCVPixelBufferOpenGLESCompatibilityKey as String : NSNumber(bool: true),
+            ]
+            self.pixelAdapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: self.videoInput!, sourcePixelBufferAttributes: pixelAttributes)
+            self.assetWriter!.addInput(self.videoInput!)
+            
+            self.assetWriter!.startWriting()
+            self.assetWriter!.startSessionAtSourceTime(kCMTimeZero)
+            self.recordStart = true
+        } catch ( let error as NSError){
+           NSLog("%@", error)
+        }
     }
     /*
     // MARK: - Navigation
