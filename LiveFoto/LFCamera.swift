@@ -32,8 +32,17 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var _uuid : String?
     
     // video writer
+    private var _recordStart : Bool = false
+    private var _previousFrameTime : CMTime = kCMTimeInvalid
+    private var _minFrameDuration : CMTime = kCMTimeInvalid
+    private var _recordDuration : CMTime = kCMTimeIndefinite
+    private var _videoRecordCallBack : ((Bool) -> Void)?
+    
     private var _assetWriter : AVAssetWriter?
     private var _assetWriterVideoInput : AVAssetWriterInput?
+    private var _pixelAdapter : AVAssetWriterInputPixelBufferAdaptor?
+    private var _assetWriterMetadataInput : AVAssetWriterInput?
+    private var _metadataAdapter : AVAssetWriterInputMetadataAdaptor?
     
     var livePhoto : Bool = true
     // cicontext
@@ -131,32 +140,89 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     func snapLivePhoto(block : (Bool) -> Void) {
         dispatch_async((self._sessionQueue)!, { () -> Void in
             // uuid
-            self._uuid = NSUUID().UUIDString
+            let uuid = NSUUID().UUIDString
             
             // for video
-            let videoPath = (NSTemporaryDirectory() as NSString!).stringByAppendingPathComponent(self._uuid! + "mov")
-            NSFileManager.defaultManager().removeItemAtPathIfExists(videoPath)
-            let videoURL = NSURL(fileURLWithPath: videoPath)
-            // assetWriter
-            let assetWriter : AVAssetWriter?
-            do {
-                assetWriter = try AVAssetWriter(URL: videoURL, fileType: AVFileTypeQuickTimeMovie)
-            } catch (_) {
-                assetWriter = nil
-            }
-            
+            let videoURL = self.videoURL(uuid: uuid)
+            let assetWriter = self.assetWriter(videoURL: videoURL)
             if assetWriter == nil {
                 block(false)
                 return
             }
-            
             assetWriter?.metadata = [self.metadataItem(self._uuid!)]
             
+            let (assetWriterVideoInput, pixelAdapter) = self.assetWriterVideo(CGSizeMake(1980, 1080))
+            let (assetWriterMetadataInput, metadataAdapter) = self.assetWriterMetadata()
+            
+            assetWriter?.addInput(assetWriterVideoInput)
+            assetWriter?.addInput(assetWriterMetadataInput)
+            
+            self._assetWriter = assetWriter
+            self._assetWriterVideoInput = assetWriterVideoInput
+            self._assetWriterMetadataInput = assetWriterMetadataInput
+            self._pixelAdapter = pixelAdapter
+            self._metadataAdapter = metadataAdapter
+            
+            self._minFrameDuration = CMTimeMake(39, 600)
+            self._recordDuration = CMTimeMakeWithSeconds(3.0, 600)
+            self._recordStart = true
+            
+            // for image
+            let imageURL = self.imageURL(uuid: uuid)
         })
     }
     
-    private func initWriter(videoURL : NSURL) -> AVAssetWriter {
-        let assetWriter : AVAssetWriter!
+    
+    private func assetWriterMetadata() -> (AVAssetWriterInput, AVAssetWriterInputMetadataAdaptor) {
+        let spec = [
+            kCMMetadataFormatDescriptionMetadataSpecificationKey_Identifier as String : "mdta/com.apple.quicktime.still-image-time",
+            kCMMetadataFormatDescriptionMetadataSpecificationKey_DataType as String : "com.apple.metadata.datatype.int8"
+        ]
+        var desc : CMMetadataFormatDescription?
+        CMMetadataFormatDescriptionCreateWithMetadataSpecifications(kCFAllocatorDefault, kCMMetadataFormatType_Boxed, [spec], &desc)
+        let assetWriterMetadataInput = AVAssetWriterInput(mediaType: AVMediaTypeMetadata, outputSettings: nil, sourceFormatHint: desc)
+        let metadataAdapter = AVAssetWriterInputMetadataAdaptor(assetWriterInput: assetWriterMetadataInput)
+        return (assetWriterMetadataInput, metadataAdapter)
+    }
+    
+    private func assetWriterVideo(videoSize : CGSize) -> (AVAssetWriterInput, AVAssetWriterInputPixelBufferAdaptor) {
+        let outputSettings = [
+            AVVideoCodecKey : AVVideoCodecH264,
+            AVVideoWidthKey : NSNumber(double: Double(videoSize.width)),
+            AVVideoHeightKey : NSNumber(double: Double(videoSize.height))
+        ]
+        let assetWriterVideoInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: outputSettings)
+        let pixelAdapter = self.assetWriterVideoInputPixelBufferAdapter(videoSize, videoInput: assetWriterVideoInput)
+        return (assetWriterVideoInput, pixelAdapter)
+    }
+    
+    private func assetWriterVideoInputPixelBufferAdapter(videoSize : CGSize, videoInput : AVAssetWriterInput) -> AVAssetWriterInputPixelBufferAdaptor {
+        let sourcePixelBufferAttributes = [
+            kCVPixelBufferPixelFormatTypeKey as String : NSNumber(unsignedInt: kCVPixelFormatType_32BGRA),
+            kCVPixelBufferWidthKey as String : NSNumber(double: Double(videoSize.width)),
+            kCVPixelBufferHeightKey as String : NSNumber(double: Double(videoSize.height)),
+            kCVPixelBufferOpenGLESCompatibilityKey as String : NSNumber(bool: true)
+        ]
+        let pixelAdapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: videoInput, sourcePixelBufferAttributes: sourcePixelBufferAttributes)
+        return pixelAdapter
+    }
+    
+    private func outputFileURL(uuid uuid : String, fileExtend : String) -> NSURL {
+        let outputFilePath = NSTemporaryDirectory() + uuid + "." + fileExtend
+        NSFileManager.defaultManager().removeItemAtPathIfExists(outputFilePath)
+        return NSURL(fileURLWithPath: outputFilePath, isDirectory: false)
+    }
+    
+    private func videoURL(uuid uuid : String) -> NSURL {
+        return self.outputFileURL(uuid: uuid, fileExtend: "mov")
+    }
+    
+    private func imageURL(uuid uuid : String) -> NSURL {
+        return self.outputFileURL(uuid: uuid, fileExtend: "jpg")
+    }
+    
+    private func assetWriter(videoURL videoURL : NSURL) -> AVAssetWriter? {
+        let assetWriter : AVAssetWriter?
         do {
             assetWriter = try AVAssetWriter(URL: videoURL, fileType: AVFileTypeQuickTimeMovie)
         } catch (_) {
@@ -203,17 +269,73 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         _previousTime = presentationTime;
         
         let cvpixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) as CVPixelBuffer!
-        let w = CVPixelBufferGetWidth(cvpixelBuffer)
-        let h = CVPixelBufferGetHeight(cvpixelBuffer)
+//        let w = CVPixelBufferGetWidth(cvpixelBuffer)
+//        let h = CVPixelBufferGetHeight(cvpixelBuffer)
         
-        print("%d x %d", w, h)
         if cvpixelBuffer != nil {
+            if _recordStart {
+                precondition(_assetWriter != nil && _assetWriterVideoInput != nil
+                    && _pixelAdapter != nil , "asset input nil")
+                if !_assetWriter!.startWriting() {
+                   NSLog("error : %@", _assetWriter!.error!)
+                }
+                if CMTIME_IS_INVALID(_startTime) {
+                    // first frame
+                    _startTime = presentationTime
+                    _assetWriter!.startSessionAtSourceTime(_startTime)
+                    _metadataAdapter!.appendTimedMetadataGroup(self.avtimedMetadata(_startTime))
+                    
+                    if _assetWriterVideoInput!.readyForMoreMediaData {
+                        _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: _startTime)
+                        _previousTime = _startTime
+                    }
+                } else {
+                    if CMTIME_IS_INVALID(_minFrameDuration) {
+                        //
+                        _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: presentationTime)
+                    } else {
+                        let frameDuration = CMTimeSubtract(presentationTime, _previousTime)
+                        if frameDuration >= _minFrameDuration {
+                            _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: presentationTime)
+                            _previousTime = presentationTime
+                        } else {
+//                            NSStringFromCGAffineTransform(<#T##transform: CGAffineTransform##CGAffineTransform#>)
+//                            NSLog("drop frame ", <#T##args: CVarArgType...##CVarArgType#>)
+                        }
+                    }
+                    // stop ?
+                    if CMTIME_IS_VALID(_recordDuration) {
+                        let duration = CMTimeSubtract(presentationTime, _startTime)
+                        if duration >= _recordDuration {
+                            //
+                            // TODO:
+                        }
+                    }
+                    
+                }
+                
+            }
+            
+            
+            
+            
             let ciimage = CIImage(CVImageBuffer: cvpixelBuffer!)
             
             if delegate != nil {
                 delegate!.capture(ciimage, time: presentationTime)
             }
         }
+    }
+    
+    private func avtimedMetadata(startTime : CMTime) -> AVTimedMetadataGroup {
+        let metadataGroupItem = AVMutableMetadataItem()
+        metadataGroupItem.key = "com.apple.quicktime.still-image-time"
+        metadataGroupItem.keySpace = "mdta"
+        metadataGroupItem.value = NSNumber(int: 0)
+        metadataGroupItem.dataType = "com.apple.metadata.datatype.int8"
+        
+        let group = AVTimedMetadataGroup(items: [metadataGroupItem], timeRange: CMTimeRangeMake(startTime, CMTimeMake(200, 3000)))
+        return group
     }
     
     /// drop frame

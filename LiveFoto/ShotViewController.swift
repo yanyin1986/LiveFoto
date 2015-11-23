@@ -135,6 +135,7 @@ class ShotViewController: UIViewController, LFCameraDelegate {
         self.index = self.index + 1
     }
     
+    // MARK : actions
     @IBAction func toggle(sender : UIButton!) {
         sender.selected = !sender.selected
         crop = sender.selected
@@ -156,6 +157,10 @@ class ShotViewController: UIViewController, LFCameraDelegate {
     }
     
     @IBAction func record(sender : UIButton!) {
+        camera?.snapLivePhoto({ (result : Bool) -> Void in
+            
+        })
+        return
         let url = NSTemporaryDirectory().stringByAppendingString("out.mov")
         if NSFileManager.defaultManager().fileExistsAtPath(url) == true {
             do { try NSFileManager.defaultManager().removeItemAtPath(url) } catch {}
