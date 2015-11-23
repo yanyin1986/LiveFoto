@@ -10,6 +10,8 @@ import UIKit
 import AVFoundation
 import CoreImage
 import Photos
+import ImageIO
+import MobileCoreServices
 
 protocol LFCameraDelegate {
     func capture(image : CIImage, time : CMTime)
@@ -36,7 +38,7 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var _previousFrameTime : CMTime = kCMTimeInvalid
     private var _minFrameDuration : CMTime = kCMTimeInvalid
     private var _recordDuration : CMTime = kCMTimeIndefinite
-    private var _videoRecordCallBack : ((Bool) -> Void)?
+    private var _videoRecordCallBack : ((Bool, String) -> Void)?
     
     private var _assetWriter : AVAssetWriter?
     private var _assetWriterVideoInput : AVAssetWriterInput?
@@ -136,9 +138,27 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         return videoCaptureDevice
     }
     
+    func snapStill(uuid : String, imageURL : NSURL, block : (Bool) -> Void) {
+        let connection = self._stillImageOutput?.connectionWithMediaType(AVMediaTypeVideo)
+        self._stillImageOutput?.captureStillImageAsynchronouslyFromConnection(connection, completionHandler: { (sample : CMSampleBufferRef!, error : NSError!) -> Void in
+            let data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sample)
+            let imageSource = CGImageSourceCreateWithData(data as CFData, nil)
+            let properties = CGImageSourceCopyProperties(imageSource!, nil)
+            var destinationImageProperties = properties! as Dictionary
+            destinationImageProperties[kCGImagePropertyMakerAppleDictionary] = [ "17" : uuid ]
+            let imageDestination = CGImageDestinationCreateWithURL(imageURL, kUTTypeJPEG, 1, nil)
+            CGImageDestinationAddImageFromSource(imageDestination!, imageSource!, 0, destinationImageProperties)
+            CGImageDestinationFinalize(imageDestination!)
+        })
+    }
+    
     // capture a live photo
-    func snapLivePhoto(block : (Bool) -> Void) {
+    func snapLivePhoto(block : (Bool, String) -> Void) {
         dispatch_async((self._sessionQueue)!, { () -> Void in
+            if self._recordStart {
+                block(false, "")
+                return
+            }
             // uuid
             let uuid = NSUUID().UUIDString
             
@@ -146,12 +166,12 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             let videoURL = self.videoURL(uuid: uuid)
             let assetWriter = self.assetWriter(videoURL: videoURL)
             if assetWriter == nil {
-                block(false)
+                block(false, "")
                 return
             }
-            assetWriter?.metadata = [self.metadataItem(self._uuid!)]
+            assetWriter?.metadata = [self.metadataItem(uuid)]
             
-            let (assetWriterVideoInput, pixelAdapter) = self.assetWriterVideo(CGSizeMake(1980, 1080))
+            let (assetWriterVideoInput, pixelAdapter) = self.assetWriterVideo(CGSizeMake(1920, 1080))
             let (assetWriterMetadataInput, metadataAdapter) = self.assetWriterMetadata()
             
             assetWriter?.addInput(assetWriterVideoInput)
@@ -165,10 +185,18 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             
             self._minFrameDuration = CMTimeMake(39, 600)
             self._recordDuration = CMTimeMakeWithSeconds(3.0, 600)
-            self._recordStart = true
             
+            self._videoRecordCallBack = block
+            self._uuid = uuid
             // for image
             let imageURL = self.imageURL(uuid: uuid)
+            
+            let after = dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(500) * NSEC_PER_MSEC))
+            dispatch_after(after, self._sessionQueue!, { () -> Void in
+                self.snapStill(uuid, imageURL : imageURL, block: { (result : Bool) -> Void in
+                    NSLog("photo ok")
+                })
+            })
         })
     }
     
@@ -192,6 +220,9 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             AVVideoHeightKey : NSNumber(double: Double(videoSize.height))
         ]
         let assetWriterVideoInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: outputSettings)
+        assetWriterVideoInput.expectsMediaDataInRealTime = true
+        assetWriterVideoInput.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+        
         let pixelAdapter = self.assetWriterVideoInputPixelBufferAdapter(videoSize, videoInput: assetWriterVideoInput)
         return (assetWriterVideoInput, pixelAdapter)
     }
@@ -263,67 +294,103 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     /// not drop frame
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         let presentationTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-        if CMTIME_IS_INVALID(_previousTime) == false {
-            
-        }
-        _previousTime = presentationTime;
+//        if CMTIME_IS_INVALID(_previousTime) == false {
+//            
+//        }
+////        _previousTime = presentationTime;
         
         let cvpixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) as CVPixelBuffer!
 //        let w = CVPixelBufferGetWidth(cvpixelBuffer)
 //        let h = CVPixelBufferGetHeight(cvpixelBuffer)
         
-        if cvpixelBuffer != nil {
-            if _recordStart {
-                precondition(_assetWriter != nil && _assetWriterVideoInput != nil
-                    && _pixelAdapter != nil , "asset input nil")
-                if !_assetWriter!.startWriting() {
-                   NSLog("error : %@", _assetWriter!.error!)
+        if cvpixelBuffer == nil {
+            return
+        }
+        
+        if _assetWriter != nil && _assetWriterVideoInput != nil && _pixelAdapter != nil {
+            let status = _assetWriter!.status
+            
+            // stop ?
+            if CMTIME_IS_VALID(_recordDuration) && status == .Writing {
+                let duration = CMTimeSubtract(presentationTime, _startTime)
+                if duration > _recordDuration {
+                    //
+                    // TODO:
+                    NSLog("duration")
+                    _recordStart = false
+                    self.stopRecording()
+                    return
                 }
-                if CMTIME_IS_INVALID(_startTime) {
-                    // first frame
-                    _startTime = presentationTime
-                    _assetWriter!.startSessionAtSourceTime(_startTime)
-                    _metadataAdapter!.appendTimedMetadataGroup(self.avtimedMetadata(_startTime))
-                    
-                    if _assetWriterVideoInput!.readyForMoreMediaData {
-                        _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: _startTime)
-                        _previousTime = _startTime
-                    }
-                } else {
-                    if CMTIME_IS_INVALID(_minFrameDuration) {
-                        //
-                        _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: presentationTime)
-                    } else {
-                        let frameDuration = CMTimeSubtract(presentationTime, _previousTime)
-                        if frameDuration >= _minFrameDuration {
-                            _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: presentationTime)
-                            _previousTime = presentationTime
-                        } else {
-//                            NSStringFromCGAffineTransform(<#T##transform: CGAffineTransform##CGAffineTransform#>)
-//                            NSLog("drop frame ", <#T##args: CVarArgType...##CVarArgType#>)
-                        }
-                    }
-                    // stop ?
-                    if CMTIME_IS_VALID(_recordDuration) {
-                        let duration = CMTimeSubtract(presentationTime, _startTime)
-                        if duration >= _recordDuration {
-                            //
-                            // TODO:
-                        }
-                    }
-                    
+            }
+            
+            if !_recordStart {
+                _recordStart = true
+                if !_assetWriter!.startWriting() {
+                    NSLog("error : %@", _assetWriter!.error!)
                 }
                 
+                // first frame
+                _startTime = presentationTime
+                _assetWriter!.startSessionAtSourceTime(_startTime)
+                _metadataAdapter!.appendTimedMetadataGroup(self.avtimedMetadata(_startTime))
+                
+                if _assetWriterVideoInput!.readyForMoreMediaData {
+                    _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: _startTime)
+                    _previousTime = _startTime
+                    NSLog("---%@---[writen]", NSStringFromCMTime(presentationTime))
+                }
             }
             
-            
-            
-            
-            let ciimage = CIImage(CVImageBuffer: cvpixelBuffer!)
-            
-            if delegate != nil {
-                delegate!.capture(ciimage, time: presentationTime)
+            if CMTIME_IS_INVALID(_minFrameDuration) {
+                //
+                _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: presentationTime)
+                _previousTime = presentationTime
+            } else {
+                let frameDuration = CMTimeSubtract(presentationTime, _previousTime)
+                if frameDuration >= _minFrameDuration {
+                    _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: presentationTime)
+                    _previousTime = presentationTime
+                    NSLog("---%@---[writen]", NSStringFromCMTime(presentationTime))
+                } else {
+                    //                            NSStringFromCGAffineTransform(<#T##transform: CGAffineTransform##CGAffineTransform#>)
+                    //                            NSLog("drop frame ", <#T##args: CVarArgType...##CVarArgType#>)
+                }
             }
+        }
+    
+    
+        let ciimage = CIImage(CVImageBuffer: cvpixelBuffer!)
+        
+        if delegate != nil {
+            delegate!.capture(ciimage, time: presentationTime)
+        }
+    }
+    
+    func stopRecording() {
+        if _assetWriterVideoInput != nil && _assetWriter != nil && _uuid != nil {
+            _assetWriterVideoInput!.markAsFinished()
+            _assetWriterVideoInput = nil
+            _pixelAdapter = nil
+            if _assetWriterMetadataInput != nil {
+                _assetWriterMetadataInput!.markAsFinished()
+                _assetWriterMetadataInput = nil
+                _metadataAdapter = nil
+            }
+            
+            let assetWriter = _assetWriter
+            let videoRecordCallback = _videoRecordCallBack
+            let uuid = _uuid
+            
+            _uuid = nil
+            _assetWriter = nil
+            _videoRecordCallBack = nil
+            _startTime = kCMTimeInvalid
+            assetWriter!.finishWritingWithCompletionHandler({ () -> Void in
+                
+                if videoRecordCallback != nil {
+                    videoRecordCallback!(assetWriter!.status == .Completed, uuid!)
+                }
+            })
         }
     }
     

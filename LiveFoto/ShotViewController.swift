@@ -11,6 +11,7 @@ import GLKit
 import AVFoundation
 import QuartzCore
 import CoreImage
+import Photos
 
 class ShotViewController: UIViewController, LFCameraDelegate {
     
@@ -157,8 +158,23 @@ class ShotViewController: UIViewController, LFCameraDelegate {
     }
     
     @IBAction func record(sender : UIButton!) {
-        camera?.snapLivePhoto({ (result : Bool) -> Void in
+        camera?.snapLivePhoto({ (result : Bool, uuid : String) -> Void in
+            let videoURL = NSURL(fileURLWithPath: (NSTemporaryDirectory() + uuid + ".mov"))
+            let imageURL = NSURL(fileURLWithPath: (NSTemporaryDirectory() + uuid + ".jpg"))
             
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                PHPhotoLibrary.sharedPhotoLibrary().performChanges({ () -> Void in
+                    let request = PHAssetCreationRequest.creationRequestForAsset()
+                    request.addResourceWithType(PHAssetResourceType(rawValue: 9)!, fileURL: videoURL, options: nil)
+                    request.addResourceWithType(.Photo, fileURL: imageURL, options: nil)
+                    }, completionHandler: { (result : Bool, error : NSError?) -> Void in
+                    if result {
+                        NSLog("save to camera roll as live phot")
+                    } else {
+                        NSLog("something wrong when saving : %@")
+                    }
+                })
+            })
         })
         return
         let url = NSTemporaryDirectory().stringByAppendingString("out.mov")
