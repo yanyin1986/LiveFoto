@@ -11,12 +11,13 @@ import GLKit
 import AVFoundation
 import QuartzCore
 import CoreImage
-import Photos
 
 class ShotViewController: UIViewController, LFCameraDelegate {
     
     @IBOutlet weak var previewView : GLKView!
     @IBOutlet weak var heightConst : NSLayoutConstraint!
+    @IBOutlet weak var progressButton : ProgressButton!
+    @IBOutlet weak var progressBar : UIProgressView!
     
     var camera : LFCamera?
     var transformFilter : CIFilter?
@@ -67,7 +68,7 @@ class ShotViewController: UIViewController, LFCameraDelegate {
     func capture(image: CIImage, time: CMTime) {
         transformFilter?.setValue(image, forKey: kCIInputImageKey)
         var transform = CGAffineTransformIdentity// CGAffineTransformTranslate(CGAffineTransformIdentity, -960, -540)
-        transform = CGAffineTransformRotate(transform, CGFloat(M_PI_2 * 0.5))// / 1000.0 * self.index))
+        transform = CGAffineTransformRotate(transform, CGFloat(-M_PI_2))// / 1000.0 * self.index))
         
         transformFilter?.setValue(NSValue(CGAffineTransform : transform), forKey: kCIInputTransformKey)
         let ciimage : CIImage! = image.imageByApplyingTransform(transform)
@@ -158,82 +159,26 @@ class ShotViewController: UIViewController, LFCameraDelegate {
     }
     
     @IBAction func record(sender : UIButton!) {
-        camera?.snapLivePhoto({ (result : Bool, uuid : String) -> Void in
-            let videoURL = NSURL(fileURLWithPath: (NSTemporaryDirectory() + uuid + ".mov"))
-            let imageURL = NSURL(fileURLWithPath: (NSTemporaryDirectory() + uuid + ".jpg"))
-            
+        camera?.snapLivePhoto({ (progress) -> Void in
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                PHPhotoLibrary.sharedPhotoLibrary().performChanges({ () -> Void in
-                    let request = PHAssetCreationRequest.creationRequestForAsset()
-                    request.addResourceWithType(PHAssetResourceType(rawValue: 9)!, fileURL: videoURL, options: nil)
-                    request.addResourceWithType(.Photo, fileURL: imageURL, options: nil)
-                    }, completionHandler: { (result : Bool, error : NSError?) -> Void in
-                    if result {
-                        NSLog("save to camera roll as live phot")
-                    } else {
-                        NSLog("something wrong when saving : %@")
-                    }
-                })
+                self.progressBar.progress = progress
             })
+            }, resultBlock: { (result, imageOutputURL, videoOutputURL) -> Void in
+                if imageOutputURL != nil && videoOutputURL != nil {
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        let livePhoto = LFLivePhoto(imageURL: imageOutputURL!, videoURL: videoOutputURL!)
+                        livePhoto.saveToLibrary({ (errorType) -> Void in
+                            switch(errorType) {
+                            case .NoError:
+                                NSLog("OK")
+                                break
+                            default:
+                                NSLog("something wrong when save")
+                                break
+                            }
+                        })
+                    })
+                }
         })
-        return
-        let url = NSTemporaryDirectory().stringByAppendingString("out.mov")
-        if NSFileManager.defaultManager().fileExistsAtPath(url) == true {
-            do { try NSFileManager.defaultManager().removeItemAtPath(url) } catch {}
-        }
-        
-        
-        do {
-            self.assetWriter = try AVAssetWriter(URL: NSURL(fileURLWithPath: url), fileType: AVFileTypeQuickTimeMovie)
-        } catch (let error as NSError) {
-            NSLog("%@", error)
-        }
-        
-        precondition(self.assetWriter != nil)
-        
-        do {
-            let outputSettings = [
-                AVVideoCodecKey : AVVideoCodecH264,
-                AVVideoWidthKey : NSNumber(int: 1980),
-                AVVideoHeightKey: NSNumber(int: 1080)
-            ]
-            self.videoInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: outputSettings)
-            self.videoInput!.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
-            
-            /*
-            NSDictionary *pixelBufferAttributes =
-            @{
-            (id) kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-            (id) kCVPixelBufferWidthKey : @(self.currentVideoDimensions.width),
-            (id) kCVPixelBufferHeightKey : @(self.currentVideoDimensions.height),
-            (id) kCVPixelBufferOpenGLESCompatibilityKey : @(YES),
-            };
-*/
-            let pixelAttributes =
-            [
-                kCVPixelBufferPixelFormatTypeKey as String : NSNumber(unsignedInt: kCVPixelFormatType_32BGRA),
-                kCVPixelBufferWidthKey as String : NSNumber(double: 1920),
-                kCVPixelBufferHeightKey as String : NSNumber(double: 1080),
-                kCVPixelBufferOpenGLESCompatibilityKey as String : NSNumber(bool: true),
-            ]
-            self.pixelAdapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: self.videoInput!, sourcePixelBufferAttributes: pixelAttributes)
-            self.assetWriter!.addInput(self.videoInput!)
-            
-            self.assetWriter!.startWriting()
-            self.assetWriter!.startSessionAtSourceTime(kCMTimeZero)
-            self.recordStart = true
-        } catch ( let error as NSError){
-           NSLog("%@", error)
-        }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

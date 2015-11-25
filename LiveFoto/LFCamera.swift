@@ -17,7 +17,11 @@ protocol LFCameraDelegate {
     func capture(image : CIImage, time : CMTime)
 }
 
+typealias LivePhotoCaptureProgressBlock = (progress : Float) -> Void
+typealias LivePhotoCaptureResultBlock = (result : Bool, imageOutputURL : NSURL?, videoOutputURL : NSURL?) -> Void
+
 final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+    
     private var _sessionQueue : dispatch_queue_t?
     private var _captureQueue : dispatch_queue_t?
     private var _captureSession : AVCaptureSession?
@@ -38,7 +42,10 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var _previousFrameTime : CMTime = kCMTimeInvalid
     private var _minFrameDuration : CMTime = kCMTimeInvalid
     private var _recordDuration : CMTime = kCMTimeIndefinite
-    private var _videoRecordCallBack : ((Bool, String) -> Void)?
+    private var _videoRecordCallBack : LivePhotoCaptureResultBlock?
+    private var _videoRecordProgressBlock : LivePhotoCaptureProgressBlock?
+    private var _videoOutputURL : NSURL?
+    private var _imageOutputURL : NSURL?
     
     private var _assetWriter : AVAssetWriter?
     private var _assetWriterVideoInput : AVAssetWriterInput?
@@ -51,7 +58,6 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     var ciContext : CIContext?
     //
     var delegate : LFCameraDelegate?
-    
     
     var previewView : UIView? {
         get {
@@ -153,10 +159,10 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     }
     
     // capture a live photo
-    func snapLivePhoto(block : (Bool, String) -> Void) {
+    func snapLivePhoto(progressBlock : LivePhotoCaptureProgressBlock, resultBlock : LivePhotoCaptureResultBlock) {
         dispatch_async((self._sessionQueue)!, { () -> Void in
             if self._recordStart {
-                block(false, "")
+                resultBlock(result: false, imageOutputURL: nil, videoOutputURL: nil)
                 return
             }
             // uuid
@@ -166,7 +172,7 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             let videoURL = self.videoURL(uuid: uuid)
             let assetWriter = self.assetWriter(videoURL: videoURL)
             if assetWriter == nil {
-                block(false, "")
+                resultBlock(result: false, imageOutputURL: nil, videoOutputURL: nil)
                 return
             }
             assetWriter?.metadata = [self.metadataItem(uuid)]
@@ -182,14 +188,17 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             self._assetWriterMetadataInput = assetWriterMetadataInput
             self._pixelAdapter = pixelAdapter
             self._metadataAdapter = metadataAdapter
+            self._videoOutputURL = videoURL
             
             self._minFrameDuration = CMTimeMake(39, 600)
             self._recordDuration = CMTimeMakeWithSeconds(3.0, 600)
             
-            self._videoRecordCallBack = block
+            self._videoRecordCallBack = resultBlock
+            self._videoRecordProgressBlock = progressBlock
             self._uuid = uuid
             // for image
             let imageURL = self.imageURL(uuid: uuid)
+            self._imageOutputURL = imageURL
             
             let after = dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(500) * NSEC_PER_MSEC))
             dispatch_after(after, self._sessionQueue!, { () -> Void in
@@ -294,18 +303,7 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     /// not drop frame
     func captureOutput(captureOutput: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, fromConnection connection: AVCaptureConnection!) {
         let presentationTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-//        if CMTIME_IS_INVALID(_previousTime) == false {
-//            
-//        }
-////        _previousTime = presentationTime;
-        
-        let cvpixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) as CVPixelBuffer!
-//        let w = CVPixelBufferGetWidth(cvpixelBuffer)
-//        let h = CVPixelBufferGetHeight(cvpixelBuffer)
-        
-        if cvpixelBuffer == nil {
-            return
-        }
+        guard let cvpixelBuffer : CVPixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) as CVPixelBuffer! else { return }
         
         if _assetWriter != nil && _assetWriterVideoInput != nil && _pixelAdapter != nil {
             let status = _assetWriter!.status
@@ -313,6 +311,12 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             // stop ?
             if CMTIME_IS_VALID(_recordDuration) && status == .Writing {
                 let duration = CMTimeSubtract(presentationTime, _startTime)
+                if self._videoRecordProgressBlock != nil {
+                    let durationSec = CMTimeGetSeconds(duration)
+                    let totalSec = CMTimeGetSeconds(_recordDuration)
+                    let progress = durationSec / totalSec
+                    self._videoRecordProgressBlock!(progress : Float(progress))
+                }
                 if duration > _recordDuration {
                     //
                     // TODO:
@@ -351,15 +355,12 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
                     _pixelAdapter!.appendPixelBuffer(cvpixelBuffer, withPresentationTime: presentationTime)
                     _previousTime = presentationTime
                     NSLog("---%@---[writen]", NSStringFromCMTime(presentationTime))
-                } else {
-                    //                            NSStringFromCGAffineTransform(<#T##transform: CGAffineTransform##CGAffineTransform#>)
-                    //                            NSLog("drop frame ", <#T##args: CVarArgType...##CVarArgType#>)
                 }
             }
         }
     
     
-        let ciimage = CIImage(CVImageBuffer: cvpixelBuffer!)
+        let ciimage = CIImage(CVImageBuffer: cvpixelBuffer)
         
         if delegate != nil {
             delegate!.capture(ciimage, time: presentationTime)
@@ -379,7 +380,8 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             
             let assetWriter = _assetWriter
             let videoRecordCallback = _videoRecordCallBack
-            let uuid = _uuid
+            let imageOutputURL = _imageOutputURL
+            let videoOutputURL = _videoOutputURL
             
             _uuid = nil
             _assetWriter = nil
@@ -388,7 +390,7 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             assetWriter!.finishWritingWithCompletionHandler({ () -> Void in
                 
                 if videoRecordCallback != nil {
-                    videoRecordCallback!(assetWriter!.status == .Completed, uuid!)
+                    videoRecordCallback!(result: assetWriter!.status == .Completed, imageOutputURL: imageOutputURL, videoOutputURL: videoOutputURL)
                 }
             })
         }

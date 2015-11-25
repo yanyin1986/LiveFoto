@@ -64,33 +64,57 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2vZ-qt-ol8">
-                                        <rect key="frame" x="36" y="531" width="46" height="30"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
                                         <animations/>
                                         <state key="normal" title="Button"/>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lU4-JT-9cs">
-                                        <rect key="frame" x="137" y="456" width="46" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lU4-JT-9cs" customClass="ProgressButton" customModule="LiveFoto" customModuleProvider="target">
+                                        <rect key="frame" x="129" y="424" width="62" height="62"/>
                                         <animations/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="46" id="Chl-c7-uwI"/>
-                                            <constraint firstAttribute="height" constant="30" id="i77-3B-gU8"/>
+                                            <constraint firstAttribute="width" constant="62" id="Chl-c7-uwI"/>
+                                            <constraint firstAttribute="height" constant="62" id="i77-3B-gU8"/>
                                         </constraints>
-                                        <state key="normal" title="Button"/>
+                                        <state key="normal" image="cam_nor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="outerWidth">
+                                                <real key="value" value="3"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="progressWidth">
+                                                <real key="value" value="6"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="progressColor">
+                                                <color key="value" red="0.1843137255" green="0.3921568627" blue="0.84313725490000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="progress">
+                                                <real key="value" value="0.5"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="record:" destination="hka-GU-ob9" eventType="touchUpInside" id="Zgr-tS-f2h"/>
                                         </connections>
                                     </button>
+                                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="udX-qx-t3F">
+                                        <rect key="frame" x="0.0" y="406" width="320" height="10"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="10" id="Q54-U7-8TX"/>
+                                        </constraints>
+                                    </progressView>
                                 </subviews>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="niV-dK-dpd" firstAttribute="centerX" secondItem="Yjb-fn-NqD" secondAttribute="centerX" id="7Qo-Yx-IeW"/>
+                                    <constraint firstAttribute="trailing" secondItem="udX-qx-t3F" secondAttribute="trailing" id="BRz-cj-fPF"/>
                                     <constraint firstItem="jXn-uA-TOR" firstAttribute="top" secondItem="lU4-JT-9cs" secondAttribute="bottom" constant="13" id="Bjq-wg-7uO"/>
                                     <constraint firstItem="niV-dK-dpd" firstAttribute="top" secondItem="Yjb-fn-NqD" secondAttribute="top" constant="31" id="Gw0-VY-ab4"/>
                                     <constraint firstItem="lU4-JT-9cs" firstAttribute="centerX" secondItem="jXn-uA-TOR" secondAttribute="centerX" id="Luh-kc-E5h"/>
                                     <constraint firstItem="jXn-uA-TOR" firstAttribute="centerX" secondItem="Yjb-fn-NqD" secondAttribute="centerX" id="R4y-i2-gZW"/>
+                                    <constraint firstItem="udX-qx-t3F" firstAttribute="leading" secondItem="Yjb-fn-NqD" secondAttribute="leading" id="Vdm-l7-Gd4"/>
                                     <constraint firstAttribute="height" constant="568" id="bZa-DH-q2G"/>
                                     <constraint firstAttribute="bottom" secondItem="jXn-uA-TOR" secondAttribute="bottom" constant="39" id="i9r-GK-29T"/>
+                                    <constraint firstItem="lU4-JT-9cs" firstAttribute="top" secondItem="udX-qx-t3F" secondAttribute="bottom" constant="8" id="yUm-ZB-Yzh"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -105,6 +129,8 @@
                     <navigationItem key="navigationItem" id="f3B-dz-r9A"/>
                     <connections>
                         <outlet property="previewView" destination="Yjb-fn-NqD" id="Qve-da-us4"/>
+                        <outlet property="progressBar" destination="udX-qx-t3F" id="pi7-m7-XlV"/>
+                        <outlet property="progressButton" destination="lU4-JT-9cs" id="RqY-hR-c7T"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3u2-M1-DwJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -112,4 +138,7 @@
             <point key="canvasLocation" x="312" y="330"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="cam_nor" width="62" height="62"/>
+    </resources>
 </document>

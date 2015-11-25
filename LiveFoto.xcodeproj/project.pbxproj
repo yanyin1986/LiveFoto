@@ -12,6 +12,9 @@
 		F7070F3B1BFE1970008680CF /* FilterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7070F391BFE1970008680CF /* FilterViewController.xib */; };
 		F7070F3F1BFE200E008680CF /* NSFileManager+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7070F3E1BFE200E008680CF /* NSFileManager+Utils.swift */; };
 		F7070F4C1BFF221D008680CF /* NSString+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7070F4B1BFF221D008680CF /* NSString+Utils.swift */; };
+		F7E76B5A1C04CD9A002635A9 /* LFLivePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E76B591C04CD9A002635A9 /* LFLivePhoto.swift */; };
+		F7E76B5C1C04D3B2002635A9 /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E76B5B1C04D3B2002635A9 /* ProgressButton.swift */; };
+		F7E76B5F1C04D4C9002635A9 /* CGGeometry+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E76B5E1C04D4C9002635A9 /* CGGeometry+Utils.swift */; };
 		F7F7F33E1BFD6B0500391939 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F7F33D1BFD6B0500391939 /* AppDelegate.swift */; };
 		F7F7F3431BFD6B0500391939 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7F7F3411BFD6B0500391939 /* Main.storyboard */; };
 		F7F7F3451BFD6B0500391939 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7F7F3441BFD6B0500391939 /* Assets.xcassets */; };
@@ -27,6 +30,9 @@
 		F7070F391BFE1970008680CF /* FilterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FilterViewController.xib; path = Filter/FilterViewController.xib; sourceTree = "<group>"; };
 		F7070F3E1BFE200E008680CF /* NSFileManager+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSFileManager+Utils.swift"; path = "Utils/NSFileManager+Utils.swift"; sourceTree = "<group>"; };
 		F7070F4B1BFF221D008680CF /* NSString+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+Utils.swift"; sourceTree = "<group>"; };
+		F7E76B591C04CD9A002635A9 /* LFLivePhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LFLivePhoto.swift; sourceTree = "<group>"; };
+		F7E76B5B1C04D3B2002635A9 /* ProgressButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProgressButton.swift; path = CustomViews/ProgressButton.swift; sourceTree = "<group>"; };
+		F7E76B5E1C04D4C9002635A9 /* CGGeometry+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGGeometry+Utils.swift"; sourceTree = "<group>"; };
 		F7F7F33A1BFD6B0500391939 /* LiveFoto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiveFoto.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7F7F33D1BFD6B0500391939 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F7F7F3421BFD6B0500391939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -63,8 +69,17 @@
 			children = (
 				F7070F3E1BFE200E008680CF /* NSFileManager+Utils.swift */,
 				F7070F4B1BFF221D008680CF /* NSString+Utils.swift */,
+				F7E76B5E1C04D4C9002635A9 /* CGGeometry+Utils.swift */,
 			);
 			name = Utils;
+			sourceTree = "<group>";
+		};
+		F7E76B5D1C04D3B6002635A9 /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				F7E76B5B1C04D3B2002635A9 /* ProgressButton.swift */,
+			);
+			name = CustomViews;
 			sourceTree = "<group>";
 		};
 		F7F7F3311BFD6B0500391939 = {
@@ -88,11 +103,13 @@
 			children = (
 				F7070F401BFE2013008680CF /* Utils */,
 				F7070F3D1BFE1980008680CF /* Filter */,
+				F7E76B5D1C04D3B6002635A9 /* CustomViews */,
 				F7F7F3531BFDB52800391939 /* LFEAGLContext.swift */,
 				F7F7F3511BFD6D7700391939 /* LFCamera.swift */,
 				F7070F361BFE150B008680CF /* LFVideoWriter.swift */,
 				F7F7F33D1BFD6B0500391939 /* AppDelegate.swift */,
 				F7F7F34F1BFD6C1B00391939 /* ShotViewController.swift */,
+				F7E76B591C04CD9A002635A9 /* LFLivePhoto.swift */,
 				F7F7F3411BFD6B0500391939 /* Main.storyboard */,
 				F7F7F3441BFD6B0500391939 /* Assets.xcassets */,
 				F7F7F3461BFD6B0500391939 /* LaunchScreen.storyboard */,
@@ -175,11 +192,14 @@
 			files = (
 				F7070F3A1BFE1970008680CF /* FilterViewController.swift in Sources */,
 				F7F7F3501BFD6C1B00391939 /* ShotViewController.swift in Sources */,
+				F7E76B5F1C04D4C9002635A9 /* CGGeometry+Utils.swift in Sources */,
 				F7070F3F1BFE200E008680CF /* NSFileManager+Utils.swift in Sources */,
+				F7E76B5A1C04CD9A002635A9 /* LFLivePhoto.swift in Sources */,
 				F7070F4C1BFF221D008680CF /* NSString+Utils.swift in Sources */,
 				F7F7F3521BFD6D7700391939 /* LFCamera.swift in Sources */,
 				F7070F371BFE150B008680CF /* LFVideoWriter.swift in Sources */,
 				F7F7F3541BFDB52800391939 /* LFEAGLContext.swift in Sources */,
+				F7E76B5C1C04D3B2002635A9 /* ProgressButton.swift in Sources */,
 				F7F7F33E1BFD6B0500391939 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,7 +316,7 @@
 				INFOPLIST_FILE = LiveFoto/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = tinycomic.LiveFoto;
+				PRODUCT_BUNDLE_IDENTIFIER = net.tinycomic.LiveFoto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -308,7 +328,7 @@
 				INFOPLIST_FILE = LiveFoto/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = tinycomic.LiveFoto;
+				PRODUCT_BUNDLE_IDENTIFIER = net.tinycomic.LiveFoto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
