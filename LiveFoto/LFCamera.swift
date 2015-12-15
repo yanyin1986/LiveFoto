@@ -24,9 +24,12 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     private var _sessionQueue : dispatch_queue_t?
     private var _captureQueue : dispatch_queue_t?
+    
     private var _captureSession : AVCaptureSession?
     private var _presentName : String?
     private var _previewView : UIView?
+    private var _currentDevice : AVCaptureDevice?
+    private var _currentInput : AVCaptureInput?
     
     private var _previousTime : CMTime = kCMTimeInvalid
     private var _startTime : CMTime = kCMTimeInvalid
@@ -96,10 +99,13 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             
             // camera
             let videoCaptureDevice = self.device(AVMediaTypeVideo, preferPosition: .Front)
+            self._currentDevice = videoCaptureDevice
+            
             // input
             let videoCaptureDeviceInput : AVCaptureDeviceInput
             do {
                 videoCaptureDeviceInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
+                self._currentInput = videoCaptureDeviceInput
                 if self._captureSession?.canAddInput(videoCaptureDeviceInput) == true {
                     self._captureSession?.addInput(videoCaptureDeviceInput)
                 }
@@ -142,6 +148,37 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             }
         }
         return videoCaptureDevice
+    }
+    
+    func rotate() {
+        dispatch_async(self._sessionQueue!, { () -> Void in
+            if self._currentDevice == nil || self._currentInput == nil {
+                return
+            }
+            
+            let currentPosition = self._currentDevice?.position
+            let rotatePosition : AVCaptureDevicePosition = (currentPosition == .Front) ? .Back : .Front
+            
+            let videoCaptureDevice = self.device(AVMediaTypeVideo, preferPosition: rotatePosition)
+            self._currentDevice = videoCaptureDevice
+            
+            self._captureSession?.beginConfiguration()
+            self._captureSession?.removeInput(self._currentInput)
+            
+            // input
+            let videoCaptureDeviceInput : AVCaptureDeviceInput
+            do {
+                videoCaptureDeviceInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
+                self._currentInput = videoCaptureDeviceInput
+                if self._captureSession?.canAddInput(videoCaptureDeviceInput) == true {
+                    self._captureSession?.addInput(videoCaptureDeviceInput)
+                }
+            } catch (_) {
+                
+            }
+            
+            self._captureSession?.commitConfiguration()
+        })
     }
     
     func snapStill(uuid : String, imageURL : NSURL, block : (Bool) -> Void) {
