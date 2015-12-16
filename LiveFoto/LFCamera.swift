@@ -397,7 +397,14 @@ final class LFCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         }
     
     
-        let ciimage = CIImage(CVImageBuffer: cvpixelBuffer)
+        var ciimage = CIImage(CVImageBuffer: cvpixelBuffer)
+        
+        if _currentDevice?.position == .Front {
+            var transform = CGAffineTransformMakeScale(1.0, -1.0)
+            transform = CGAffineTransformTranslate(transform, 0, ciimage.extent.size.height)
+            //, 0)
+            ciimage = ciimage.imageByApplyingTransform(transform)
+        }
         
         if delegate != nil {
             delegate!.capture(ciimage, time: presentationTime)

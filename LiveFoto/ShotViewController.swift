@@ -50,6 +50,7 @@ class ShotViewController: UIViewController, LFCameraDelegate {
         camera = LFCamera(presentName: AVCaptureSessionPresetHigh)
         camera?.delegate = self
         camera?.initSession()
+        camera?.previewView = previewView
         
         transformFilter = CIFilter(name: "CIAffineTransform")
     }
@@ -60,7 +61,10 @@ class ShotViewController: UIViewController, LFCameraDelegate {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return true
     }
     
 
@@ -129,8 +133,11 @@ class ShotViewController: UIViewController, LFCameraDelegate {
                 }
                 
             } else {
+                let extent = ciimage.extent
+                
                 previewView.bindDrawable()
-                camera?.ciContext?.drawImage(ciimage!, inRect:bounds, fromRect: ciimage.extent)
+                let rect = AVMakeRectWithAspectRatioInsideRect(bounds.size, ciimage.extent)
+                camera?.ciContext?.drawImage(ciimage!, inRect:bounds, fromRect: rect)
                 previewView.display()
             }
         }
@@ -140,16 +147,7 @@ class ShotViewController: UIViewController, LFCameraDelegate {
     // MARK : actions
     @IBAction func toggle(sender : UIButton!) {
         sender.selected = !sender.selected
-        crop = sender.selected
-        
-        if crop == true {
-            heightConst.constant = self.view.bounds.size.width
-        } else {
-            heightConst.constant = self.view.bounds.size.height
-        }
-        
-        self.view.setNeedsUpdateConstraints()
-        self.view.layoutIfNeeded()
+        camera?.rotate()
     }
     
     @IBAction func snap(sender : UIButton!) {

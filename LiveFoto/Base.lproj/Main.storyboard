@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="ksx-71-sE8">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
@@ -35,22 +36,59 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yjb-fn-NqD" customClass="GLKView">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xhh-P8-tlp" userLabel="ToolView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="40"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="niV-dK-dpd">
-                                        <rect key="frame" x="137" y="31" width="46" height="30"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="niV-dK-dpd" userLabel="LivePhotoButton">
+                                        <rect key="frame" x="140" y="0.0" width="40" height="40"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="30" id="dOp-Rp-Se8"/>
-                                            <constraint firstAttribute="width" constant="46" id="tLu-Zf-9CK"/>
+                                            <constraint firstAttribute="height" constant="40" id="dOp-Rp-Se8"/>
+                                            <constraint firstAttribute="width" constant="40" id="tLu-Zf-9CK"/>
                                         </constraints>
-                                        <state key="normal" title="Button"/>
+                                        <state key="normal" image="icon_live_photo_normal"/>
                                         <connections>
                                             <action selector="toggle:" destination="hka-GU-ob9" eventType="touchUpInside" id="deV-2N-2o4"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a6G-72-fTv" userLabel="FlashButton">
+                                        <rect key="frame" x="58" y="0.0" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="6m3-II-QME"/>
+                                            <constraint firstAttribute="height" constant="40" id="QBG-mx-d6y"/>
+                                        </constraints>
+                                        <state key="normal" image="icon_flash_normal"/>
+                                        <connections>
+                                            <action selector="toggle:" destination="hka-GU-ob9" eventType="touchUpInside" id="zIe-Qt-vZf"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UFp-9j-V6T" userLabel="RotateButton">
+                                        <rect key="frame" x="217" y="0.0" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="77Y-Fi-8Oa"/>
+                                            <constraint firstAttribute="height" constant="40" id="8O6-gK-cwV"/>
+                                        </constraints>
+                                        <state key="normal" image="icon_camera_rotate"/>
+                                        <connections>
+                                            <action selector="toggle:" destination="hka-GU-ob9" eventType="touchUpInside" id="ihL-Vf-Mgq"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="UFp-9j-V6T" firstAttribute="centerY" secondItem="niV-dK-dpd" secondAttribute="centerY" id="DLc-fI-Hbz"/>
+                                    <constraint firstAttribute="height" constant="40" id="FYM-aI-xxO"/>
+                                    <constraint firstItem="niV-dK-dpd" firstAttribute="leading" secondItem="a6G-72-fTv" secondAttribute="trailing" constant="42" id="NXU-te-1ZT"/>
+                                    <constraint firstItem="niV-dK-dpd" firstAttribute="centerY" secondItem="Xhh-P8-tlp" secondAttribute="centerY" id="QAB-Tl-HWp"/>
+                                    <constraint firstItem="a6G-72-fTv" firstAttribute="centerY" secondItem="niV-dK-dpd" secondAttribute="centerY" id="mf2-WQ-F5Z"/>
+                                    <constraint firstItem="niV-dK-dpd" firstAttribute="centerX" secondItem="Xhh-P8-tlp" secondAttribute="centerX" id="nTG-HC-fj7"/>
+                                    <constraint firstItem="UFp-9j-V6T" firstAttribute="leading" secondItem="niV-dK-dpd" secondAttribute="trailing" constant="37" id="uJv-4d-mPM"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yjb-fn-NqD" customClass="GLKView">
+                                <rect key="frame" x="0.0" y="40" width="320" height="427"/>
+                                <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jXn-uA-TOR">
-                                        <rect key="frame" x="137" y="499" width="46" height="30"/>
+                                        <rect key="frame" x="137" y="358" width="46" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="Wcx-oS-SHa"/>
                                             <constraint firstAttribute="width" constant="46" id="ubA-lQ-xJr"/>
@@ -61,11 +99,11 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2vZ-qt-ol8">
-                                        <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
+                                        <rect key="frame" x="0.0" y="-40" width="46" height="30"/>
                                         <state key="normal" title="Button"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lU4-JT-9cs" customClass="ProgressButton" customModule="LiveFoto" customModuleProvider="target">
-                                        <rect key="frame" x="129" y="424" width="62" height="62"/>
+                                        <rect key="frame" x="129" y="283" width="62" height="62"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="62" id="Chl-c7-uwI"/>
                                             <constraint firstAttribute="height" constant="62" id="i77-3B-gU8"/>
@@ -90,7 +128,7 @@
                                         </connections>
                                     </button>
                                     <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="udX-qx-t3F">
-                                        <rect key="frame" x="0.0" y="406" width="320" height="10"/>
+                                        <rect key="frame" x="0.0" y="265" width="320" height="10"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="10" id="Q54-U7-8TX"/>
                                         </constraints>
@@ -98,14 +136,12 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="niV-dK-dpd" firstAttribute="centerX" secondItem="Yjb-fn-NqD" secondAttribute="centerX" id="7Qo-Yx-IeW"/>
+                                    <constraint firstAttribute="width" secondItem="Yjb-fn-NqD" secondAttribute="height" multiplier="3:4" id="06Z-UY-swn"/>
                                     <constraint firstAttribute="trailing" secondItem="udX-qx-t3F" secondAttribute="trailing" id="BRz-cj-fPF"/>
                                     <constraint firstItem="jXn-uA-TOR" firstAttribute="top" secondItem="lU4-JT-9cs" secondAttribute="bottom" constant="13" id="Bjq-wg-7uO"/>
-                                    <constraint firstItem="niV-dK-dpd" firstAttribute="top" secondItem="Yjb-fn-NqD" secondAttribute="top" constant="31" id="Gw0-VY-ab4"/>
                                     <constraint firstItem="lU4-JT-9cs" firstAttribute="centerX" secondItem="jXn-uA-TOR" secondAttribute="centerX" id="Luh-kc-E5h"/>
                                     <constraint firstItem="jXn-uA-TOR" firstAttribute="centerX" secondItem="Yjb-fn-NqD" secondAttribute="centerX" id="R4y-i2-gZW"/>
                                     <constraint firstItem="udX-qx-t3F" firstAttribute="leading" secondItem="Yjb-fn-NqD" secondAttribute="leading" id="Vdm-l7-Gd4"/>
-                                    <constraint firstAttribute="height" constant="568" id="bZa-DH-q2G"/>
                                     <constraint firstAttribute="bottom" secondItem="jXn-uA-TOR" secondAttribute="bottom" constant="39" id="i9r-GK-29T"/>
                                     <constraint firstItem="lU4-JT-9cs" firstAttribute="top" secondItem="udX-qx-t3F" secondAttribute="bottom" constant="8" id="yUm-ZB-Yzh"/>
                                 </constraints>
@@ -113,9 +149,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Yjb-fn-NqD" firstAttribute="centerX" secondItem="IKe-f4-Ly7" secondAttribute="centerX" id="7tV-SR-UOz"/>
+                            <constraint firstAttribute="trailing" secondItem="Yjb-fn-NqD" secondAttribute="trailing" id="3Yp-2N-Uob"/>
+                            <constraint firstItem="Xhh-P8-tlp" firstAttribute="top" secondItem="teR-DG-wyS" secondAttribute="bottom" id="Chy-eN-XWF"/>
+                            <constraint firstItem="Yjb-fn-NqD" firstAttribute="top" secondItem="Xhh-P8-tlp" secondAttribute="bottom" id="LCd-n4-Qr4"/>
+                            <constraint firstAttribute="trailing" secondItem="Xhh-P8-tlp" secondAttribute="trailing" id="jZ4-s8-B1H"/>
+                            <constraint firstItem="Xhh-P8-tlp" firstAttribute="leading" secondItem="IKe-f4-Ly7" secondAttribute="leading" id="o3f-Cp-W80"/>
+                            <constraint firstItem="Yjb-fn-NqD" firstAttribute="leading" secondItem="IKe-f4-Ly7" secondAttribute="leading" id="s7E-1L-4yh"/>
                             <constraint firstItem="Yjb-fn-NqD" firstAttribute="width" secondItem="IKe-f4-Ly7" secondAttribute="width" id="u1o-vJ-II5"/>
-                            <constraint firstItem="Yjb-fn-NqD" firstAttribute="centerY" secondItem="IKe-f4-Ly7" secondAttribute="centerY" id="wFc-kF-WW3"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="f3B-dz-r9A"/>
@@ -132,5 +172,8 @@
     </scenes>
     <resources>
         <image name="cam_nor" width="62" height="62"/>
+        <image name="icon_camera_rotate" width="30" height="30"/>
+        <image name="icon_flash_normal" width="30" height="30"/>
+        <image name="icon_live_photo_normal" width="30" height="30"/>
     </resources>
 </document>
