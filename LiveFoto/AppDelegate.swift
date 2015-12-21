@@ -22,6 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Fabric.with([Crashlytics.self])
         
         self.logUser()
+        
+        let a = LFACVFile(acvFilePath: "blush.acv")
+        
         return true
     }
     

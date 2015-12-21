@@ -14,6 +14,18 @@
 		F7070F4C1BFF221D008680CF /* NSString+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7070F4B1BFF221D008680CF /* NSString+Utils.swift */; };
 		F75693AE1C27A4E2001142C4 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F75693AC1C27A4E2001142C4 /* Fabric.framework */; };
 		F75693AF1C27A4E2001142C4 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F75693AD1C27A4E2001142C4 /* Crashlytics.framework */; };
+		F75693B21C27D95A001142C4 /* LFToneCurveFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F75693B11C27D95A001142C4 /* LFToneCurveFilter.swift */; };
+		F75693B41C27D9F4001142C4 /* LFACVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = F75693B31C27D9F4001142C4 /* LFACVFile.swift */; };
+		F75693BF1C27E1B2001142C4 /* blush.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693B51C27E1B2001142C4 /* blush.acv */; };
+		F75693C01C27E1B2001142C4 /* elapse.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693B61C27E1B2001142C4 /* elapse.acv */; };
+		F75693C11C27E1B2001142C4 /* embei.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693B71C27E1B2001142C4 /* embei.acv */; };
+		F75693C21C27E1B2001142C4 /* fudge.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693B81C27E1B2001142C4 /* fudge.acv */; };
+		F75693C31C27E1B2001142C4 /* ink.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693B91C27E1B2001142C4 /* ink.acv */; };
+		F75693C41C27E1B2001142C4 /* jade.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693BA1C27E1B2001142C4 /* jade.acv */; };
+		F75693C51C27E1B2001142C4 /* lucid.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693BB1C27E1B2001142C4 /* lucid.acv */; };
+		F75693C61C27E1B2001142C4 /* lyon.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693BC1C27E1B2001142C4 /* lyon.acv */; };
+		F75693C71C27E1B2001142C4 /* sprout.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693BD1C27E1B2001142C4 /* sprout.acv */; };
+		F75693C81C27E1B2001142C4 /* tokyo.acv in Resources */ = {isa = PBXBuildFile; fileRef = F75693BE1C27E1B2001142C4 /* tokyo.acv */; };
 		F7E76B5A1C04CD9A002635A9 /* LFLivePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E76B591C04CD9A002635A9 /* LFLivePhoto.swift */; };
 		F7E76B5C1C04D3B2002635A9 /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E76B5B1C04D3B2002635A9 /* ProgressButton.swift */; };
 		F7E76B5F1C04D4C9002635A9 /* CGGeometry+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E76B5E1C04D4C9002635A9 /* CGGeometry+Utils.swift */; };
@@ -34,6 +46,18 @@
 		F7070F4B1BFF221D008680CF /* NSString+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+Utils.swift"; sourceTree = "<group>"; };
 		F75693AC1C27A4E2001142C4 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		F75693AD1C27A4E2001142C4 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		F75693B11C27D95A001142C4 /* LFToneCurveFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LFToneCurveFilter.swift; path = Filter/LFToneCurveFilter.swift; sourceTree = "<group>"; };
+		F75693B31C27D9F4001142C4 /* LFACVFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LFACVFile.swift; path = Filter/LFACVFile.swift; sourceTree = "<group>"; };
+		F75693B51C27E1B2001142C4 /* blush.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = blush.acv; path = acvFiles/blush.acv; sourceTree = "<group>"; };
+		F75693B61C27E1B2001142C4 /* elapse.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = elapse.acv; path = acvFiles/elapse.acv; sourceTree = "<group>"; };
+		F75693B71C27E1B2001142C4 /* embei.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = embei.acv; path = acvFiles/embei.acv; sourceTree = "<group>"; };
+		F75693B81C27E1B2001142C4 /* fudge.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = fudge.acv; path = acvFiles/fudge.acv; sourceTree = "<group>"; };
+		F75693B91C27E1B2001142C4 /* ink.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = ink.acv; path = acvFiles/ink.acv; sourceTree = "<group>"; };
+		F75693BA1C27E1B2001142C4 /* jade.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = jade.acv; path = acvFiles/jade.acv; sourceTree = "<group>"; };
+		F75693BB1C27E1B2001142C4 /* lucid.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = lucid.acv; path = acvFiles/lucid.acv; sourceTree = "<group>"; };
+		F75693BC1C27E1B2001142C4 /* lyon.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = lyon.acv; path = acvFiles/lyon.acv; sourceTree = "<group>"; };
+		F75693BD1C27E1B2001142C4 /* sprout.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = sprout.acv; path = acvFiles/sprout.acv; sourceTree = "<group>"; };
+		F75693BE1C27E1B2001142C4 /* tokyo.acv */ = {isa = PBXFileReference; lastKnownFileType = file; name = tokyo.acv; path = acvFiles/tokyo.acv; sourceTree = "<group>"; };
 		F7E76B591C04CD9A002635A9 /* LFLivePhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LFLivePhoto.swift; sourceTree = "<group>"; };
 		F7E76B5B1C04D3B2002635A9 /* ProgressButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProgressButton.swift; path = CustomViews/ProgressButton.swift; sourceTree = "<group>"; };
 		F7E76B5E1C04D4C9002635A9 /* CGGeometry+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGGeometry+Utils.swift"; sourceTree = "<group>"; };
@@ -66,6 +90,8 @@
 			children = (
 				F7070F381BFE1970008680CF /* FilterViewController.swift */,
 				F7070F391BFE1970008680CF /* FilterViewController.xib */,
+				F75693B11C27D95A001142C4 /* LFToneCurveFilter.swift */,
+				F75693B31C27D9F4001142C4 /* LFACVFile.swift */,
 			);
 			name = Filter;
 			sourceTree = "<group>";
@@ -87,6 +113,23 @@
 				F75693AD1C27A4E2001142C4 /* Crashlytics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F75693C91C27E1B5001142C4 /* acvFiles */ = {
+			isa = PBXGroup;
+			children = (
+				F75693B51C27E1B2001142C4 /* blush.acv */,
+				F75693B61C27E1B2001142C4 /* elapse.acv */,
+				F75693B71C27E1B2001142C4 /* embei.acv */,
+				F75693B81C27E1B2001142C4 /* fudge.acv */,
+				F75693B91C27E1B2001142C4 /* ink.acv */,
+				F75693BA1C27E1B2001142C4 /* jade.acv */,
+				F75693BB1C27E1B2001142C4 /* lucid.acv */,
+				F75693BC1C27E1B2001142C4 /* lyon.acv */,
+				F75693BD1C27E1B2001142C4 /* sprout.acv */,
+				F75693BE1C27E1B2001142C4 /* tokyo.acv */,
+			);
+			name = acvFiles;
 			sourceTree = "<group>";
 		};
 		F7E76B5D1C04D3B6002635A9 /* CustomViews */ = {
@@ -130,6 +173,7 @@
 				F7F7F3441BFD6B0500391939 /* Assets.xcassets */,
 				F7F7F3461BFD6B0500391939 /* LaunchScreen.storyboard */,
 				F7F7F3491BFD6B0500391939 /* Info.plist */,
+				F75693C91C27E1B5001142C4 /* acvFiles */,
 			);
 			path = LiveFoto;
 			sourceTree = "<group>";
@@ -196,8 +240,18 @@
 			files = (
 				F7F7F3481BFD6B0500391939 /* LaunchScreen.storyboard in Resources */,
 				F7F7F3451BFD6B0500391939 /* Assets.xcassets in Resources */,
+				F75693C41C27E1B2001142C4 /* jade.acv in Resources */,
 				F7070F3B1BFE1970008680CF /* FilterViewController.xib in Resources */,
+				F75693C31C27E1B2001142C4 /* ink.acv in Resources */,
 				F7F7F3431BFD6B0500391939 /* Main.storyboard in Resources */,
+				F75693C71C27E1B2001142C4 /* sprout.acv in Resources */,
+				F75693C61C27E1B2001142C4 /* lyon.acv in Resources */,
+				F75693C21C27E1B2001142C4 /* fudge.acv in Resources */,
+				F75693C81C27E1B2001142C4 /* tokyo.acv in Resources */,
+				F75693C51C27E1B2001142C4 /* lucid.acv in Resources */,
+				F75693C01C27E1B2001142C4 /* elapse.acv in Resources */,
+				F75693C11C27E1B2001142C4 /* embei.acv in Resources */,
+				F75693BF1C27E1B2001142C4 /* blush.acv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,7 +278,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F75693B41C27D9F4001142C4 /* LFACVFile.swift in Sources */,
 				F7070F3A1BFE1970008680CF /* FilterViewController.swift in Sources */,
+				F75693B21C27D95A001142C4 /* LFToneCurveFilter.swift in Sources */,
 				F7F7F3501BFD6C1B00391939 /* ShotViewController.swift in Sources */,
 				F7E76B5F1C04D4C9002635A9 /* CGGeometry+Utils.swift in Sources */,
 				F7070F3F1BFE200E008680CF /* NSFileManager+Utils.swift in Sources */,
@@ -348,6 +404,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",

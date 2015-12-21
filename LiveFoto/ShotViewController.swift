@@ -24,6 +24,8 @@ class ShotViewController: UIViewController, LFCameraDelegate {
 //    var cropFilter : CIFilter?
     var index : Double! = 0
 //    var crop : Bool! = false
+    var colorFilter : CIFilter?
+    var colored : Bool = false
     
     // writer
     var ciContext : CIContext?
@@ -53,6 +55,7 @@ class ShotViewController: UIViewController, LFCameraDelegate {
         camera?.previewView = previewView
         
         transformFilter = CIFilter(name: "CIAffineTransform")
+        colorFilter = CIFilter(name: "CIPhotoEffectChrome")
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -75,7 +78,7 @@ class ShotViewController: UIViewController, LFCameraDelegate {
         transform = CGAffineTransformRotate(transform, CGFloat(-M_PI_2))// / 1000.0 * self.index))
         
         transformFilter?.setValue(NSValue(CGAffineTransform : transform), forKey: kCIInputTransformKey)
-        let ciimage : CIImage! = image.imageByApplyingTransform(transform)
+        var ciimage : CIImage! = image.imageByApplyingTransform(transform)
         var extent : CGRect! = ciimage?.extent
 //        extent.origin = CGPointZero
         
@@ -133,17 +136,26 @@ class ShotViewController: UIViewController, LFCameraDelegate {
                 }
                 
             } else {
-                let extent = ciimage.extent
-                
                 previewView.bindDrawable()
                 let rect = AVMakeRectWithAspectRatioInsideRect(bounds.size, ciimage.extent)
-                camera?.ciContext?.drawImage(ciimage!, inRect:bounds, fromRect: rect)
+                ciimage = ciimage.imageByCroppingToRect(rect)
+                //
+                if colored {
+                    colorFilter?.setValue(ciimage, forKey: kCIInputImageKey)
+                    ciimage = colorFilter?.outputImage
+                }
+                //
+                camera?.ciContext?.drawImage(ciimage!, inRect:bounds, fromRect: ciimage.extent)
                 previewView.display()
             }
 //        }
         self.index = self.index + 1
     }
     
+    @IBAction func filtered(sender: UIButton!) {
+        sender.selected = !sender.selected
+        colored = sender.selected
+    }
     // MARK : actions
     @IBAction func toggle(sender : UIButton!) {
         sender.selected = !sender.selected
