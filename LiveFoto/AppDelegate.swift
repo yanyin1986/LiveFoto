@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import Fabric
+import Crashlytics
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,8 +19,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        Fabric.with([Crashlytics.self])
+        
+        self.logUser()
         return true
     }
+    
+    func logUser() {
+        var uuid = ""
+        if let uuidStored = NSUserDefaults.standardUserDefaults().stringForKey("user_uuid") {
+            uuid = uuidStored
+        } else {
+            uuid = NSUUID().UUIDString
+            NSUserDefaults.standardUserDefaults().setObject(uuid, forKey: "user_uuid")
+            NSUserDefaults.standardUserDefaults().synchronize()
+        }
+        
+        Crashlytics.sharedInstance().setUserEmail("")
+        Crashlytics.sharedInstance().setUserIdentifier(uuid)
+        Crashlytics.sharedInstance().setUserName("")
+    }
+    
+    func userDefault(key : String) -> String? {
+        return NSUserDefaults.standardUserDefaults().stringForKey(key)
+    }
+    
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

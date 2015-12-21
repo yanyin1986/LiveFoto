@@ -12,6 +12,8 @@
 		F7070F3B1BFE1970008680CF /* FilterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7070F391BFE1970008680CF /* FilterViewController.xib */; };
 		F7070F3F1BFE200E008680CF /* NSFileManager+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7070F3E1BFE200E008680CF /* NSFileManager+Utils.swift */; };
 		F7070F4C1BFF221D008680CF /* NSString+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7070F4B1BFF221D008680CF /* NSString+Utils.swift */; };
+		F75693AE1C27A4E2001142C4 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F75693AC1C27A4E2001142C4 /* Fabric.framework */; };
+		F75693AF1C27A4E2001142C4 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F75693AD1C27A4E2001142C4 /* Crashlytics.framework */; };
 		F7E76B5A1C04CD9A002635A9 /* LFLivePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E76B591C04CD9A002635A9 /* LFLivePhoto.swift */; };
 		F7E76B5C1C04D3B2002635A9 /* ProgressButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E76B5B1C04D3B2002635A9 /* ProgressButton.swift */; };
 		F7E76B5F1C04D4C9002635A9 /* CGGeometry+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E76B5E1C04D4C9002635A9 /* CGGeometry+Utils.swift */; };
@@ -30,6 +32,8 @@
 		F7070F391BFE1970008680CF /* FilterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FilterViewController.xib; path = Filter/FilterViewController.xib; sourceTree = "<group>"; };
 		F7070F3E1BFE200E008680CF /* NSFileManager+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSFileManager+Utils.swift"; path = "Utils/NSFileManager+Utils.swift"; sourceTree = "<group>"; };
 		F7070F4B1BFF221D008680CF /* NSString+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+Utils.swift"; sourceTree = "<group>"; };
+		F75693AC1C27A4E2001142C4 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
+		F75693AD1C27A4E2001142C4 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		F7E76B591C04CD9A002635A9 /* LFLivePhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LFLivePhoto.swift; sourceTree = "<group>"; };
 		F7E76B5B1C04D3B2002635A9 /* ProgressButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProgressButton.swift; path = CustomViews/ProgressButton.swift; sourceTree = "<group>"; };
 		F7E76B5E1C04D4C9002635A9 /* CGGeometry+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGGeometry+Utils.swift"; sourceTree = "<group>"; };
@@ -49,6 +53,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F75693AF1C27A4E2001142C4 /* Crashlytics.framework in Frameworks */,
+				F75693AE1C27A4E2001142C4 /* Fabric.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +80,15 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
+		F75693B01C27A500001142C4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F75693AC1C27A4E2001142C4 /* Fabric.framework */,
+				F75693AD1C27A4E2001142C4 /* Crashlytics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F7E76B5D1C04D3B6002635A9 /* CustomViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -85,6 +100,7 @@
 		F7F7F3311BFD6B0500391939 = {
 			isa = PBXGroup;
 			children = (
+				F75693B01C27A500001142C4 /* Frameworks */,
 				F7F7F33C1BFD6B0500391939 /* LiveFoto */,
 				F7F7F33B1BFD6B0500391939 /* Products */,
 			);
@@ -128,6 +144,7 @@
 				F7F7F3361BFD6B0500391939 /* Sources */,
 				F7F7F3371BFD6B0500391939 /* Frameworks */,
 				F7F7F3381BFD6B0500391939 /* Resources */,
+				F75693AB1C27A467001142C4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -185,6 +202,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F75693AB1C27A467001142C4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run f8c6db831ef6a4dfd5f1d0399b9a9ea47017c72c cadfe3c836c049f749fab6d786f67ac676523bbc44ed7929215b29ff7ef15eed";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F7F7F3361BFD6B0500391939 /* Sources */ = {
@@ -315,6 +348,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = LiveFoto/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -328,6 +365,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = LiveFoto/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

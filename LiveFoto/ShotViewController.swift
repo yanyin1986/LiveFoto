@@ -21,9 +21,9 @@ class ShotViewController: UIViewController, LFCameraDelegate {
     
     var camera : LFCamera?
     var transformFilter : CIFilter?
-    var cropFilter : CIFilter?
+//    var cropFilter : CIFilter?
     var index : Double! = 0
-    var crop : Bool! = false
+//    var crop : Bool! = false
     
     // writer
     var ciContext : CIContext?
@@ -79,22 +79,22 @@ class ShotViewController: UIViewController, LFCameraDelegate {
         var extent : CGRect! = ciimage?.extent
 //        extent.origin = CGPointZero
         
-        cropFilter?.setValue(ciimage, forKey: kCIInputImageKey)
+//        cropFilter?.setValue(ciimage, forKey: kCIInputImageKey)
         extent.size = CGSizeMake(1080, 1080)
         extent.origin = CGPointMake(extent.origin.x  , extent.origin.y + (1920 - 1080) / 2.0)
-        cropFilter?.setValue(CIVector(CGRect: extent), forKey: "inputRectangle")
+//        cropFilter?.setValue(CIVector(CGRect: extent), forKey: "inputRectangle")
         
-        let cropedImage = cropFilter?.outputImage
-        let cropedExtent = cropedImage?.extent as CGRect!
+//        let cropedImage = cropFilter?.outputImage
+//        let cropedExtent = cropedImage?.extent as CGRect!
         
         EAGLContext.setCurrentContext(LFEAGLContext.shareContext.glContext)
         let width = CGFloat(previewView.drawableWidth)
         let height = CGFloat(previewView.drawableHeight)
         let bounds = CGRectMake(0, 0, width, height)
         
-        if crop == true {
-            camera?.ciContext?.drawImage(cropedImage!, inRect:bounds, fromRect: cropedExtent)
-        } else {
+//        if crop == true {
+//            camera?.ciContext?.drawImage(cropedImage!, inRect:bounds, fromRect: cropedExtent)
+//        } else {
             if recordStart == true {
                 if CMTIME_IS_INVALID(recordStartTime) == true {
                     recordStartTime = time
@@ -140,7 +140,7 @@ class ShotViewController: UIViewController, LFCameraDelegate {
                 camera?.ciContext?.drawImage(ciimage!, inRect:bounds, fromRect: rect)
                 previewView.display()
             }
-        }
+//        }
         self.index = self.index + 1
     }
     
